@@ -4,6 +4,7 @@ import json
 class Boook:
     _id = 1
 
+    # Ниже - конструктор для инициализации книг с её названием, автором и т.д.
     def __init__(self, title, author, year):
         self.id = Boook._id
         Boook._id += 1
@@ -12,6 +13,7 @@ class Boook:
         self.year = year
         self.status = "в наличии"
 
+    # Метод для строкового представления
     def __str__(self):
         return (f"ID: {self.id},"
                 f"Название: {self.title},"
@@ -21,10 +23,12 @@ class Boook:
 
 
 class Library:
+    # Также конструктор для инициализации
     def __init__(self):
         self.books = []
         self.load_data()
 
+    # Функция для загрузки данных из JSON
     def load_data(self):
         try:
             with open(file="library.json", mode="r", encoding="utf-8") as f:
@@ -39,8 +43,10 @@ class Library:
                     Boook._id = max(Boook._id, book.id + 1)
                     self.books.append(book)
         except FileNotFoundError:
+            # Тут если же файл не найден, то вызываю метод для сохранения
             self.save_data()
 
+    # Это уже метод для сохранения данных JSON
     def save_data(self):
         with open(file="library.json", mode="w", encoding="utf-8") as f:
             data = [{"id": book.id,
@@ -56,11 +62,13 @@ class Library:
             # а indent=4 ответственнен за отступы при формировании файла (для лучшей читаемости)
             json.dump(data, f, ensure_ascii=False, indent=4)
 
+    # Добавление книги в библиотеку
     def add_book(self, title, author, year):
         book = Boook(title, author, year)
         self.books.append(book)
         self.save_data()
 
+    # Удаление книги по ID
     def remove_book(self, book_id):
         book_for_remove = None  # Поставил это значение в случае,
         # если не найдём книгу с нужным id
@@ -75,6 +83,7 @@ class Library:
         else:
             print("\n==== Нету книги с таким ID ====")
 
+    # Поиск книги по названию, автору, году
     def find_book(self, search):
         search = search.lower()
 
@@ -87,6 +96,7 @@ class Library:
 
         return results
 
+    # Отображение вообще всех книг, которые есть (в красивом/удобном формате!!!)
     def show_books(self):
         if not self.books:
             print("==== Книги отсутствуют ====")
@@ -104,6 +114,7 @@ class Library:
                   f"Статус: {book.status}")
             print("-" * 50)
 
+    # Изменение статуса книги
     def change_status(self, book_id, new_status):
         if new_status not in ["в наличии", "выдана"]:
             print("==== Некорректный статус ====")
@@ -120,9 +131,12 @@ class Library:
         print(f"Статус книги {book_to_change.title} изменен на '{new_status}'")
 
 
+# Это, собственно, и есть главная функция для запуска программы
 def main():
     library = Library()
 
+    # Ниже стандартный интерфейс для взаимодействием с пользователем, а также
+    # свои значения для ввода при выборе определенного choice
     while True:
         choice = int(input(f"\n1. Добавить книгу,\n"
                            f"2. Удалить книгу,\n"
@@ -132,6 +146,7 @@ def main():
                            f"0. Выход.\n"
                            f"\nВаш выбор: "))
 
+        # Добавление книги
         if choice == 1:
             title = input("\nВведите название книги: ")
             author = input("Введите автора книги: ")
@@ -140,6 +155,7 @@ def main():
 
             print("\n==== Книга добавлена в библиотеку ====\n")
 
+        # Удаление книги
         elif choice == 2:
             while True:
                 try:
@@ -149,6 +165,7 @@ def main():
                 except ValueError:
                     print("\n==== Введено некорректное значение ====\n")
 
+        # Нахождение книги
         elif choice == 3:
             search_term = input("Введите поисковый запрос (название, автор или год): ")
             results = library.find_book(search_term)
@@ -159,9 +176,11 @@ def main():
             else:
                 print("\n==== Книги не найдены по запросу ====")
 
+        # Вывод всех книг
         elif choice == 4:
             library.show_books()
 
+        # Изменение статуса книги
         elif choice == 5:
             while True:
                 try:
@@ -182,10 +201,12 @@ def main():
             else:
                 print("\n==== Книга с таким ID не найдена ====")
 
+        # Просто выход из программы
         elif choice == 0:
             print("\n==== Выход из программы ====")
             break
 
+        # Доколе некорректно введено значение
         else:
             print("\n==== Некорректный выбор ====")
 
