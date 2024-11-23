@@ -73,7 +73,7 @@ class Library:
             self.books.remove(book_for_remove)
             self.save_data()
         else:
-            print("==== Нету книги с таким ID ====")
+            print("\n==== Нету книги с таким ID ====")
 
     def find_book(self, search):
         search = search.lower()
@@ -85,8 +85,6 @@ class Library:
                     search in str(book.year)):
                 results.append(book)
 
-        if not results:
-            print("==== Книги не найдены ====")
         return results
 
     def show_books(self):
@@ -117,12 +115,9 @@ class Library:
                 book_to_change = book
                 break
 
-        if book_to_change:
-            book_to_change.status = new_status
-            self.save_data()
-            print(f"Статус книги {book_to_change.title} изменен на '{new_status}'")
-        else:
-            print("==== Книга с таким ID не найдена ====")
+        book_to_change.status = new_status
+        self.save_data()
+        print(f"Статус книги {book_to_change.title} изменен на '{new_status}'")
 
 
 def main():
@@ -146,8 +141,13 @@ def main():
             print("\n==== Книга добавлена в библиотеку ====\n")
 
         elif choice == 2:
-            book_id = int(input("Введите ID книги для удаления: "))
-            library.remove_book(book_id)
+            while True:
+                try:
+                    book_id = int(input("Введите ID книги для удаления: "))
+                    library.remove_book(book_id)
+                    break
+                except ValueError:
+                    print("\n==== Введено некорректное значение ====\n")
 
         elif choice == 3:
             search_term = input("Введите поисковый запрос (название, автор или год): ")
@@ -157,15 +157,30 @@ def main():
                 for book in results:
                     print(book)
             else:
-                print("==== Книги не найдены по запросу ====")
+                print("\n==== Книги не найдены по запросу ====")
 
         elif choice == 4:
             library.show_books()
 
         elif choice == 5:
-            book_id = int(input("Введите ID книги, статус которой хотите изменить: "))
-            new_status = input("Введите новый статус ('в наличии' или 'выдана'): ")
-            library.change_status(book_id, new_status)
+            while True:
+                try:
+                    book_id = int(input("Введите ID книги, статус которой хотите изменить: "))
+                    break
+                except ValueError:
+                    print("\n==== Введено некорректное значение ====\n")
+
+            book_to_change = None
+            for book in library.books:
+                if book.id == book_id:
+                    book_to_change = book
+                    break
+
+            if book_to_change:
+                new_status = input("Введите новый статус ('в наличии' или 'выдана'): ").lower()
+                library.change_status(book_id, new_status)
+            else:
+                print("\n==== Книга с таким ID не найдена ====")
 
         elif choice == 0:
             print("\n==== Выход из программы ====")
