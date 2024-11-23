@@ -107,7 +107,7 @@ class Library:
     def change_status(self, book_id, new_status):
         if new_status not in ["в наличии", "выдана"]:
             print("==== Некорректный статус ====")
-            return
+            raise ValueError("Некорректный статус")
 
         book_to_change = None
         for book in self.books:
