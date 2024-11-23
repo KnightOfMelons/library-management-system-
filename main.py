@@ -45,7 +45,7 @@ class Library:
         with open(file="library.json", mode="w", encoding="utf-8") as f:
             data = [{"id": book.id,
                      "title": book.title,
-                     "author:": book.author,
+                     "author": book.author,
                      "year": book.year,
                      "status": book.status
                      } for book in self.books]
@@ -85,6 +85,8 @@ class Library:
                     search in str(book.year)):
                 results.append(book)
 
+        if not results:
+            print("==== Книги не найдены ====")
         return results
 
     def show_books(self):
@@ -93,15 +95,15 @@ class Library:
             # Просто оставляем return без ничего и функция завершит своё выполнение
             return
 
-        print("Список всех книг в библиотеке:\n"
-              "-" * 50)
+        print("Список всех книг в библиотеке:\n")
+        print("-" * 50)
 
         for book in self.books:
-            print(f"ID: {book.id}")
-            print(f"Название: {book.title}")
-            print(f"Автор: {book.author}")
-            print(f"Год: {book.year}")
-            print(f"Статус: {book.status}")
+            print(f"ID: {book.id}\n"
+                  f"Название: {book.title}\n"
+                  f"Автор: {book.author}\n"
+                  f"Год: {book.year}\n"
+                  f"Статус: {book.status}")
             print("-" * 50)
 
     def change_status(self, book_id, new_status):
@@ -127,29 +129,50 @@ def main():
     library = Library()
 
     while True:
-        choice = int(input(f"1. Добавить книгу,\n"
+        choice = int(input(f"\n1. Добавить книгу,\n"
                            f"2. Удалить книгу,\n"
                            f"3. Найти книгу,\n"
                            f"4. Показать все книги,\n"
                            f"5. Изменить статус книги,\n"
                            f"0. Выход.\n"
-                           f"Ваш выбор: "))
+                           f"\nВаш выбор: "))
 
         if choice == 1:
-            pass
+            title = input("\nВведите название книги: ")
+            author = input("Введите автора книги: ")
+            year = int(input("Введите год выпуска книги: "))
+            library.add_book(title, author, year)
+
+            print("\n==== Книга добавлена в библиотеку ====\n")
+
         elif choice == 2:
-            pass
+            book_id = int(input("Введите ID книги для удаления: "))
+            library.remove_book(book_id)
+
         elif choice == 3:
-            pass
+            search_term = input("Введите поисковый запрос (название, автор или год): ")
+            results = library.find_book(search_term)
+            if results:
+                print("Найденные книги:")
+                for book in results:
+                    print(book)
+            else:
+                print("==== Книги не найдены по запросу ====")
+
         elif choice == 4:
-            pass
+            library.show_books()
+
         elif choice == 5:
-            pass
+            book_id = int(input("Введите ID книги, статус которой хотите изменить: "))
+            new_status = input("Введите новый статус ('в наличии' или 'выдана'): ")
+            library.change_status(book_id, new_status)
+
         elif choice == 0:
-            print("==== Выход из программы ====")
+            print("\n==== Выход из программы ====")
             break
+
         else:
-            print("==== Некорректный выбор ====")
+            print("\n==== Некорректный выбор ====")
 
 
 if __name__ == "__main__":
